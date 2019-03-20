@@ -8,6 +8,10 @@ love.graphics.setDefaultFilter("nearest")
 -- Cette ligne permet de déboguer pas à pas dans ZeroBraneStudio
 if arg[#arg] == "-debug" then require("mobdebug").start() end
 
+-------------------------- DEPENDANCES ---------------------------------------------
+
+local Carte = require("carte")
+
 -------------------------- VARIABLE GLOBAL -----------------------------------------
 
 local start = love.timer.getTime();
