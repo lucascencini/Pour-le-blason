@@ -8,23 +8,19 @@ love.graphics.setDefaultFilter("nearest")
 -- Cette ligne permet de déboguer pas à pas dans ZeroBraneStudio
 if arg[#arg] == "-debug" then require("mobdebug").start() end
 
--------------------------- DEPENDANCES ---------------------------------------------
-
-local Carte = require("carte")
-
 -------------------------- VARIABLE GLOBAL -----------------------------------------
 
 local start = love.timer.getTime();
 
-local nbCarte = 0; -- Nombre de carte dans un deck
+local nbCarte = 9; -- Nombre de carte dans un deck
 local nbCarteDeck = 0; -- Nombre de carte dans le deck du joueur
 local nbExemplaireMax = 4; -- Nombre max d'exemplaire par carte
 local nbCavalier = 0; -- Nombre d'exemplaire de cavalier
 local nbLancier = 0; -- Nombre d'exemplaire de lancier
 local nbCatapulte = 0; -- Nombre d'exemplaire de catapulte
-local nbArcher = 1; -- Nombre d'exemplaire de archer
+local nbArcher = 0; -- Nombre d'exemplaire de archer
 local nbMassier = 0; -- Nombre d'exemplaire de massier
-local mouse = {}
+local mouse = {};
 
 -- Variable des différentes lignes
 local ligneCTA;
@@ -44,16 +40,26 @@ ecran_courant = "Collection";
 
 -------------------------- IMAGES ECRANS -------------------------------------------
 
+-- Fond
 local imgMenu = love.graphics.newImage("collection/fond/arene.jpg")
+
+-- Image des cartes
 local imgCatapulte = love.graphics.newImage("collection/Carte/Catapulte.png")
 local imgCavalier = love.graphics.newImage("collection/Carte/Cavalier.png")
 local imgLancier = love.graphics.newImage("collection/Carte/Lancier.png")
 local imgArcher= love.graphics.newImage("collection/Carte/Archer.png")
 local imgMassier = love.graphics.newImage("collection/Carte/Massier.png")
 
+-- Image des fleches
 local imgFlecheN = love.graphics.newImage("collection/Fond/flecheN.png")
 local imgFlecheV = love.graphics.newImage("collection/Fond/flecheV.png")
 local imgFlecheR = love.graphics.newImage("collection/Fond/flecheR.png")
+
+-- Image des boutons
+local imgBtnPlusR = love.graphics.newImage("collection/Bouton/plusR.png")
+local imgBtnPlus = love.graphics.newImage("collection/Bouton/plus.png")
+local imgBtnMoinsR = love.graphics.newImage("collection/Bouton/minusR.png")
+local imgBtnMoins = love.graphics.newImage("collection/Bouton/minus.png")
 
 function love.load()
   love.window.setFullscreen(true)
@@ -62,12 +68,73 @@ end
 
 function love.update(dt)
   mouse.x, mouse.y = love.mouse.getPosition() 
-  
 end
 
 function love.draw()
   drawCollection()
+  drawBtnArcher();
+  drawBtnCatapulte();
+  drawBtnCavalier();
+  drawBtnMassier();
+  drawBtnLancier();
   
+  changeArrow();
+  -- love.graphics.setColor(255, 255, 255)
+  -- love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)
+end
+
+function love.mousepressed(mx, my, button)
+  if button == 1 then
+  -- Vérifie si zone cavalier
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 376 and mouse.y <= 436) and (nbCavalier < nbExemplaireMax) and (nbCarteDeck < nbCarte)) then
+      nbCavalier = nbCavalier + 1;
+      nbCarteDeck = nbCarteDeck + 1;
+    end
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 436 and mouse.y <= 496) and (nbCavalier > 0)) then
+      nbCavalier = nbCavalier - 1;
+      nbCarteDeck = nbCarteDeck - 1;
+    end
+  -- Vérifie si zone catapulte
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 203 and mouse.y <= 263) and (nbCatapulte < nbExemplaireMax) and (nbCarteDeck < nbCarte)) then
+      nbCatapulte = nbCatapulte + 1;
+      nbCarteDeck = nbCarteDeck + 1;
+    end
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 263 and mouse.y <= 323) and (nbCatapulte > 0)) then
+      nbCatapulte = nbCatapulte - 1;
+      nbCarteDeck = nbCarteDeck - 1;
+    end
+  -- Vérifie si zone archer
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 30 and mouse.y <= 90) and (nbArcher < nbExemplaireMax) and (nbCarteDeck < nbCarte)) then
+      nbArcher = nbArcher + 1;
+      nbCarteDeck = nbCarteDeck + 1;
+    end
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 90 and mouse.y <= 150) and (nbArcher > 0)) then
+      nbArcher = nbArcher - 1;
+      nbCarteDeck = nbCarteDeck - 1;
+    end
+  -- Vérifie si zone massier
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 559 and mouse.y <= 619) and (nbMassier < nbExemplaireMax) and (nbCarteDeck < nbCarte)) then
+      nbMassier = nbMassier + 1;
+      nbCarteDeck = nbCarteDeck + 1;
+    end
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 619 and mouse.y <= 679) and (nbMassier > 0)) then
+      nbMassier = nbMassier - 1;
+      nbCarteDeck = nbCarteDeck - 1;
+    end
+  -- Vérifie si zone lancier
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 722 and mouse.y <= 782) and (nbLancier < nbExemplaireMax) and (nbCarteDeck < nbCarte)) then
+      nbLancier = nbLancier + 1;
+      nbCarteDeck = nbCarteDeck + 1;
+    end
+    if ((mouse.x >= 1070 and mouse.x <= 1130) and (mouse.y >= 782 and mouse.y <= 842) and (nbLancier > 0)) then
+      nbLancier = nbLancier - 1;
+      nbCarteDeck = nbCarteDeck - 1;
+    end
+  end
+  
+end
+
+function changeArrow()
   -- Vérifie si zone cavalier
   if ((mouse.x >= 70 and mouse.x <= 270) and (mouse.y >= 250 and mouse.y <= 450)) then
     drawCavalierMode()
@@ -121,6 +188,11 @@ function drawListe()
   love.graphics.setColor(255,255,255)
   
   -- Draw button +/-
+  drawBtnArcher();
+  drawBtnCatapulte();
+  drawBtnCavalier();
+  drawBtnMassier();
+  drawBtnLancier();
   
   -- Draw title
   font = love.graphics.newFont(30)
@@ -194,4 +266,85 @@ function drawLancierMode()
   ligneLC = love.graphics.draw(imgFlecheV, 330, 280, math.rad(35), 0.5, 0.2)
   ligneCTL = love.graphics.draw(imgFlecheR, 700, 675, math.rad(-120), 0.5, 0.15)
   ligneAL = love.graphics.draw(imgFlecheR, 700, 575, math.rad(-60), 0.2, 0.2)
+end
+
+function drawBtnCatapulte()
+    if (nbCarteDeck == nbCarte) then
+    love.graphics.draw(imgBtnPlus, 1070, 203, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 263, 0, 0.5)
+  elseif (nbCatapulte == 0) then
+    love.graphics.draw(imgBtnPlusR, 1070, 203, 0, 0.5)
+    love.graphics.draw(imgBtnMoins, 1070, 263, 0, 0.5)
+  elseif (nbCatapulte == 4) then
+    love.graphics.draw(imgBtnPlus, 1070, 203, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 263, 0, 0.5)
+  else 
+    love.graphics.draw(imgBtnPlusR, 1070, 203, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 263, 0, 0.5)
+  end
+end
+
+function drawBtnArcher()
+  if (nbCarteDeck == nbCarte) then
+    love.graphics.draw(imgBtnPlus, 1070, 30, 0, 0.5)
+     love.graphics.draw(imgBtnMoinsR, 1070, 90, 0, 0.5)
+  elseif (nbArcher == 0) then
+    love.graphics.draw(imgBtnPlusR, 1070, 30, 0, 0.5)
+    love.graphics.draw(imgBtnMoins, 1070, 90, 0, 0.5)
+  elseif (nbArcher == 4) then
+    love.graphics.draw(imgBtnPlus, 1070, 30, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 90, 0, 0.5)
+  else 
+    love.graphics.draw(imgBtnPlusR, 1070, 30, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 90, 0, 0.5)
+  end
+  
+end
+
+function drawBtnCavalier()
+  if (nbCarteDeck == nbCarte) then
+    love.graphics.draw(imgBtnPlus, 1070, 376, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 436, 0, 0.5)
+  elseif (nbCavalier == 0) then
+    love.graphics.draw(imgBtnPlusR, 1070, 376, 0, 0.5)
+  love.graphics.draw(imgBtnMoins, 1070, 436, 0, 0.5)
+  elseif (nbCavalier == 4) then
+    love.graphics.draw(imgBtnPlus, 1070, 376, 0, 0.5)
+  love.graphics.draw(imgBtnMoinsR, 1070, 436, 0, 0.5)
+  else 
+    love.graphics.draw(imgBtnPlusR, 1070, 376, 0, 0.5)
+  love.graphics.draw(imgBtnMoinsR, 1070, 436, 0, 0.5)
+end
+end
+
+function drawBtnMassier()
+  if (nbCarteDeck == nbCarte) then
+    love.graphics.draw(imgBtnPlus, 1070, 549, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 609, 0, 0.5)
+  elseif (nbMassier == 0) then
+    love.graphics.draw(imgBtnPlusR, 1070, 549, 0, 0.5)
+  love.graphics.draw(imgBtnMoins, 1070, 609, 0, 0.5)
+  elseif (nbMassier == 4) then
+    love.graphics.draw(imgBtnPlus, 1070, 549, 0, 0.5)
+  love.graphics.draw(imgBtnMoinsR, 1070, 609, 0, 0.5)
+  else 
+    love.graphics.draw(imgBtnPlusR, 1070, 549, 0, 0.5)
+  love.graphics.draw(imgBtnMoinsR, 1070, 609, 0, 0.5)
+  end
+end
+
+function drawBtnLancier()
+  if (nbCarteDeck == nbCarte) then
+    love.graphics.draw(imgBtnPlus, 1070, 722, 0, 0.5)
+    love.graphics.draw(imgBtnMoinsR, 1070, 782, 0, 0.5)
+  elseif (nbLancier == 0) then
+    love.graphics.draw(imgBtnPlusR, 1070, 722, 0, 0.5)
+  love.graphics.draw(imgBtnMoins, 1070, 782, 0, 0.5)
+  elseif (nbLancier == 4) then
+    love.graphics.draw(imgBtnPlus, 1070, 722, 0, 0.5)
+  love.graphics.draw(imgBtnMoinsR, 1070, 782, 0, 0.5)
+  else 
+    love.graphics.draw(imgBtnPlusR, 1070, 722, 0, 0.5)
+  love.graphics.draw(imgBtnMoinsR, 1070, 782, 0, 0.5)
+  end
 end
