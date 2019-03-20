@@ -60,6 +60,8 @@ local imgBtnPlusR = love.graphics.newImage("collection/Bouton/plusR.png")
 local imgBtnPlus = love.graphics.newImage("collection/Bouton/plus.png")
 local imgBtnMoinsR = love.graphics.newImage("collection/Bouton/minusR.png")
 local imgBtnMoins = love.graphics.newImage("collection/Bouton/minus.png")
+local imgBtnRetour = love.graphics.newImage("collection/Bouton/retour.png")
+local imgBtnRetourB = love.graphics.newImage("collection/Bouton/retourB.png")
 
 function love.load()
   love.window.setFullscreen(true)
@@ -79,8 +81,8 @@ function love.draw()
   drawBtnLancier();
   
   changeArrow();
-  -- love.graphics.setColor(255, 255, 255)
-  -- love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)
 end
 
 function love.mousepressed(mx, my, button)
@@ -155,6 +157,11 @@ function changeArrow()
   if ((mouse.x >= 680 and mouse.x <= 880) and (mouse.y >= 630 and mouse.y <= 830)) then
     drawLancierMode()
   end
+  
+  -- Vérifie si zone retour
+  if ((mouse.x >= 10 and mouse.x <= 140) and (mouse.y >= 730 and mouse.y <= 860)) then
+    love.graphics.draw(imgBtnRetourB, 10, 730, 0, 0.2);
+  end
 end
 
 function updateDeck()
@@ -193,6 +200,7 @@ function drawListe()
   drawBtnCavalier();
   drawBtnMassier();
   drawBtnLancier();
+  love.graphics.draw(imgBtnRetour, 10, 730, 0, 0.2)
   
   -- Draw title
   font = love.graphics.newFont(30)
