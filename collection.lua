@@ -133,7 +133,6 @@ function love.mousepressed(mx, my, button)
       nbCarteDeck = nbCarteDeck - 1;
     end
   end
-  
 end
 
 function changeArrow()
