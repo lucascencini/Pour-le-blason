@@ -278,6 +278,7 @@ function love.mousepressed(mx, my, button)
       nbWinJ2 = 0; 
       isFinish = 0; 
       setBattle = 0; 
+      quitter = 0;
       ecran_courant = "Menu";
     end
   end  
